@@ -7,8 +7,10 @@ import {
   Patch,
   Query,
   HttpStatus,
-  HttpException,
+  Logger,
+  Res,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RequestService } from './request.service';
 import {
   CreateRequestDto,
@@ -16,28 +18,41 @@ import {
   RequestStatusDto,
 } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseRequestDto } from './dto/response-request.dto';
 
 @Controller('requests')
 @ApiTags('requests')
 export class RequestController {
+  private readonly logger = new Logger(RequestController.name);
+
   constructor(private readonly requestService: RequestService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a request' })
   @ApiResponse({ status: HttpStatus.CREATED, type: ResponseRequestDto })
-  async createRequest(@Body() createRequestDto: CreateRequestDto) {
+  async createRequest(@Res() res, @Body() createRequestDto: CreateRequestDto) {
     try {
-      const request = await this.requestService.createRequest(createRequestDto);
-      console.log('request:', request);
-      return { message: 'Request created successfully', data: request };
-    } catch (error) {
-      console.log('error:', error);
-      throw new HttpException(
-        'Failed to create the request',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      this.logger.log(
+        `Creating a new request for user id #${createRequestDto.userId}`,
       );
+      const request = await this.requestService.createRequest(createRequestDto);
+
+      this.logger.log(
+        `Successfully created a new request for user id #${request.userId}, request id ${request.requestId}`,
+      );
+
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'Request created successfully', data: request });
+    } catch (error) {
+      this.logger.error(
+        `Failed to create new request for user id #${createRequestDto.userId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.CREATED).json({
+        message: `Failed to create the request for user id #${createRequestDto.userId}`,
+      });
     }
   }
 
@@ -48,15 +63,22 @@ export class RequestController {
     type: ResponseRequestDto,
     isArray: true,
   })
-  async getAllRequestsForAdmin(@Query() filter: RequestFilterDto) {
+  async getAllRequests(@Res() res, @Query() filter: RequestFilterDto) {
     try {
-      const requests = await this.requestService.getAllRequestsForAdmin(filter);
-      return { message: 'Requests fetched successfully', data: requests };
+      this.logger.log(`Initiated fetching requests`);
+
+      const requests = await this.requestService.getAllRequests(filter);
+
+      this.logger.log(`Successfully fetched requests`);
+
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: 'Successfully fetched requests', data: requests });
     } catch (error) {
-      throw new HttpException(
-        'Failed to fetch requests',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.logger.error(`Failed to fetch requests`, error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Failed to fetch  requests' });
     }
   }
 
@@ -68,35 +90,67 @@ export class RequestController {
     isArray: true,
   })
   async getAllRequestsForUser(
+    @Res() res,
     @Param('userId') userId: number,
     @Query() filter: RequestFilterDto,
   ) {
     try {
+      this.logger.log(
+        `Initiated fetching user requests for user id #${userId}`,
+      );
+
       const requests = await this.requestService.getAllRequestsForUser(
-        userId,
+        +userId,
         filter,
       );
-      return { message: 'User requests fetched successfully', data: requests };
-    } catch (error) {
-      throw new HttpException(
-        'Failed to fetch user requests',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+
+      this.logger.log(
+        `Successfully fetched user requests for user id #${userId}`,
       );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully fetched user requests for user id #${userId}`,
+        data: requests,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch user requests for user id #${userId}`,
+        error,
+      );
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to fetch user requests for user id #${userId}`,
+      });
     }
   }
 
   @Get(':requestId')
   @ApiOperation({ summary: 'Get a request' })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
-  async getRequestById(@Param('requestId') requestId: number) {
+  async getRequestById(@Res() res, @Param('requestId') requestId: number) {
     try {
-      const request = await this.requestService.getRequestById(requestId);
-      return { message: 'Request fetched successfully', data: request };
-    } catch (error) {
-      throw new HttpException(
-        'Failed to fetch the request',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      this.logger.log(
+        `Initiated fetching request for request id #${requestId}`,
       );
+
+      const request = await this.requestService.getRequestById(+requestId);
+
+      this.logger.log(
+        `Successfully fetched request for request id #${requestId}`,
+      );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully fetched request for request id #${requestId}`,
+        data: request,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch request for request id #${requestId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to fetch request for request id #${requestId}`,
+      });
     }
   }
 
@@ -104,20 +158,37 @@ export class RequestController {
   @ApiOperation({ summary: 'Update a request' })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
   async updateRequestByRequestId(
+    @Res() res,
     @Param('requestId') requestId: number,
     @Body() updateRequestDto: UpdateRequestDto,
   ) {
     try {
+      this.logger.log(
+        `Initiated updating request for request id #${requestId}`,
+      );
+
       const updatedRequest = await this.requestService.updateRequestByRequestId(
-        requestId,
+        +requestId,
         updateRequestDto,
       );
-      return { message: 'Request updated successfully', data: updatedRequest };
-    } catch (error) {
-      throw new HttpException(
-        'Failed to update the request',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+
+      this.logger.log(
+        `Successfully updated request for request id #${requestId}`,
       );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully updated request for request id #${requestId}`,
+        data: updatedRequest,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to update request for request id #${requestId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to updated request for request id #${requestId}`,
+      });
     }
   }
 
@@ -125,23 +196,45 @@ export class RequestController {
   @ApiOperation({ summary: 'Update a request status' })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
   async updateRequestStatus(
+    @Res() res,
     @Param('requestId') requestId: number,
-    @Body() updateRequestDtoStatus: RequestStatusDto,
+    @Body() updateRequestStatusDto: RequestStatusDto,
   ) {
     try {
+      this.logger.log(
+        `Initiated updating request status to ${JSON.stringify(
+          updateRequestStatusDto,
+        )} for request id #${requestId}`,
+      );
+
       const updatedRequest = await this.requestService.updateRequestStatus(
-        requestId,
-        updateRequestDtoStatus,
+        +requestId,
+        updateRequestStatusDto,
       );
-      return {
-        message: 'Request status updated successfully',
+
+      this.logger.log(
+        `Successfully updated request status to ${JSON.stringify(
+          updateRequestStatusDto,
+        )} for request id #${requestId}`,
+      );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully updated request status for request id #${requestId}`,
         data: updatedRequest,
-      };
+      });
     } catch (error) {
-      throw new HttpException(
-        'Failed to update the request status',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      this.logger.error(
+        `Failed to update request status to ${JSON.stringify(
+          updateRequestStatusDto,
+        )} for request id #${requestId}`,
+        error,
       );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to updated request status to ${JSON.stringify(
+          updateRequestStatusDto,
+        )} for request id #${requestId}`,
+      });
     }
   }
 }
