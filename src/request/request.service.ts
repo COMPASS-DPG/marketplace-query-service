@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Import your Prisma service
 import {
   CreateRequestDto,
@@ -9,17 +9,16 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 
 @Injectable()
 export class RequestService {
-  constructor(
-    @Inject(forwardRef(() => PrismaService))
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
+  // Create a new request
   async createRequest(createRequestDto: CreateRequestDto) {
     return this.prisma.request.create({
       data: createRequestDto,
     });
   }
 
+  // Get all requests with optional filters and pagination
   async getAllRequests(filter: RequestFilterDto) {
     const { status, type, limit = 10, offset = 0, orderBy } = filter;
     return this.prisma.request.findMany({
@@ -35,6 +34,7 @@ export class RequestService {
     });
   }
 
+  // Get all requests for a specific user with optional filters and pagination
   async getAllRequestsForUser(userId: number, filter: any) {
     const { status, type, limit = 10, offset = 0, orderBy } = filter;
     return this.prisma.request.findMany({
@@ -51,6 +51,7 @@ export class RequestService {
     });
   }
 
+  // Get a request by its ID
   async getRequestById(requestId: number) {
     return this.prisma.request.findUnique({
       where: {
@@ -59,6 +60,7 @@ export class RequestService {
     });
   }
 
+  // Update a request by its ID
   async updateRequestByRequestId(
     requestId: number,
     updateRequestDto: UpdateRequestDto,
@@ -71,6 +73,7 @@ export class RequestService {
     });
   }
 
+  // Update the status of a request by its ID
   async updateRequestStatus(
     requestId: number,
     updateRequestStatusDto: RequestStatusDto,
