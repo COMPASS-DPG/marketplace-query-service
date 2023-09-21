@@ -1,15 +1,15 @@
 import { RequestStatusEnum, RequestTypeEnum } from '../enum/request.enum';
 
 export class ResponseRequestDto {
-  requestId: number;
-  userId: number;
-  title: string;
-  type: RequestTypeEnum;
-  description: string;
-  status: RequestStatusEnum;
-  requestContent: object;
-  responseContent: object;
-  remark: string;
-  createdAt: Date;
-  updatedAt: Date;
+  readonly requestId: number;
+  readonly userId: number;
+  readonly title: string;
+  readonly type: RequestTypeEnum;
+  readonly description: string;
+  readonly status: RequestStatusEnum;
+  readonly requestContent: object;
+  readonly responseContent: object;
+  readonly remark: string;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }
