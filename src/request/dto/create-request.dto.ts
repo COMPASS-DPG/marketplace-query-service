@@ -85,4 +85,8 @@ export class RequestFilterDto {
   @IsOptional()
   @IsString() // Validate that orderBy is a string
   orderBy?: string;
+
+  @IsOptional()
+  @IsEnum(RequestTypeEnum, { each: true }) // Validate that request type is a valid enum value
+  type?: RequestTypeEnum;
 }

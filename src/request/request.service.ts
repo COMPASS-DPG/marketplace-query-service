@@ -20,26 +20,28 @@ export class RequestService {
     });
   }
 
-  async getAllRequestsForAdmin(filter: RequestFilterDto) {
-    const { status, limit, offset, orderBy } = filter;
+  async getAllRequests(filter: RequestFilterDto) {
+    const { status, type, limit = 10, offset = 0, orderBy } = filter;
     return this.prisma.request.findMany({
       where: {
-        status: status || undefined, // Optional status filter
+        status: status ?? undefined, // Optional status filter
+        type: type ?? undefined, // Optional type filter
       },
       orderBy: {
         [orderBy || 'createdAt']: 'asc', // Default sorting by createdAt
       },
-      skip: offset,
-      take: limit,
+      skip: +offset,
+      take: +limit,
     });
   }
 
   async getAllRequestsForUser(userId: number, filter: any) {
-    const { status, limit, offset, orderBy } = filter;
+    const { status, type, limit = 10, offset = 0, orderBy } = filter;
     return this.prisma.request.findMany({
       where: {
         userId: userId,
-        status: status || undefined, // Optional status filter
+        status: status ?? undefined, // Optional status filter
+        type: type ?? undefined, // Optional type filter
       },
       orderBy: {
         [orderBy || 'createdAt']: 'asc', // Default sorting by createdAt
