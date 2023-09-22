@@ -154,7 +154,9 @@ export class SettlementController {
         `Initiated fetching settlement for request id #${requestId}`,
       );
 
-      const request = await this.settlementService.getsettlementById(+requestId);
+      const settlement = await this.settlementService.getsettlementById(
+        +requestId,
+      );
 
       this.logger.log(
         `Successfully fetched settlement for request id #${requestId}`,
@@ -162,7 +164,7 @@ export class SettlementController {
 
       return res.status(HttpStatus.OK).json({
         message: `Successfully fetched settlement for request id #${requestId}`,
-        data: request,
+        data: settlement,
       });
     } catch (error) {
       this.logger.error(
@@ -172,6 +174,45 @@ export class SettlementController {
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: `Failed to fetch settlement for request id #${requestId}`,
+      });
+    }
+  }
+
+  // update the settlement by the requestID
+  @Patch(':requestId')
+  @ApiOperation({ summary: 'Update a settlement request' }) // Describes the api operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseSettlementDto }) // Describes the response for Swagger.
+  async updateSettlementByRequestId(
+    @Res() res,
+    @Param('requestId') requestId: number,
+    @Body() updateSettlementDto: UpdateSettlementDto,
+  ) {
+    try {
+      this.logger.log(
+        `Initiated updating settlement request for request id #${requestId}`,
+      );
+
+      const updatedSettlement =
+        await this.settlementService.updateSettlementByRequestId(
+          +requestId,
+          updateSettlementDto,
+        );
+
+      this.logger.log(
+        `Successfully updated settlement request for request id #${requestId}`,
+      );
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully updated settlement request for request id #${requestId}`,
+        data: updatedSettlement,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to update settlement request for request id #${requestId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to update settlement request for request id #${requestId}`,
       });
     }
   }

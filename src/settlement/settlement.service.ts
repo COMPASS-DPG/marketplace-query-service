@@ -64,7 +64,7 @@ export class SettlementService {
     });
   }
 
-  // Get a settlement by its requestID
+  // Get a settlement by its request ID
   async getsettlementById(requestId: number) {
     return this.prisma.settlement.findMany({
       where: {
@@ -73,17 +73,16 @@ export class SettlementService {
     });
   }
 
-  // Update a settlement by its requestId
-  async updateSettlementById(
+  // Update the requested settlement status by its ID
+  async updateSettlementByRequestId(
     requestId: number,
-    updateSettlementDto: UpdateSettlementDto,
+    updateSettlementStatusDto: UpdateSettlementDto,
   ) {
     return this.prisma.settlement.updateMany({
       where: {
         requestId: requestId,
       },
-      data: updateSettlementDto,
+      data: updateSettlementStatusDto,
     });
   }
-
 }
