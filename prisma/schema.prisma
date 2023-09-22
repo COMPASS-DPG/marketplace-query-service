@@ -24,20 +24,6 @@ model User {
   Settlement     Settlement[]
 }
 
-// Dummy Admin Model
-model Admin {
-  id             Int          @id @default(autoincrement())
-  email          String       @unique
-  role           String
-  username       String
-  password       String
-  profilePicture String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  requests       Request[]
-  Settlement     Settlement[]
-}
-
 model Request {
   requestId       Int               @id @default(autoincrement())
   userId          Int
@@ -51,24 +37,21 @@ model Request {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   user            User              @relation(fields: [userId], references: [id]) // Specify fields and references here
-  Admin           Admin?            @relation(fields: [adminId], references: [id])
-  adminId         Int?
   Settlement      Settlement[]
 }
 
 model Settlement {
-  settlementId       Int                    @id @default(autoincrement())
-  requestId          Int
-  userId             Int
-  adminId            Int
-  requestStatus      SettlementStatusEnum
-  userResponseStatus UserResponseStatusEnum
-  transactionId      Int?
-  createdAt          DateTime               @default(now())
-  updatedAt          DateTime               @updatedAt
-  user               User                   @relation(fields: [userId], references: [id]) // Specify fields and references here
-  Admin              Admin                  @relation(fields: [adminId], references: [id]) // Specify Admin field reference here
-  request            Request                @relation(fields: [requestId], references: [requestId])
+  settlementId             Int                          @id @default(autoincrement())
+  requestId                Int                          @unique
+  userId                   Int
+  requestStatus            SettlementStatusEnum
+  thirdPartyResponseStatus thirdPartyResponseStatusEnum
+  transactionId            Int?
+  content                  Json?
+  createdAt                DateTime                     @default(now())
+  updatedAt                DateTime                     @updatedAt
+  user                     User                         @relation(fields: [userId], references: [id]) // Specify fields and references here
+  request                  Request                      @relation(fields: [requestId], references: [requestId])
 }
 
 enum RequestTypeEnum {
@@ -90,7 +73,7 @@ enum SettlementStatusEnum {
   REJECTED
 }
 
-enum UserResponseStatusEnum {
+enum thirdPartyResponseStatusEnum {
   PENDING
-  RECIEVED
+  VERIFIED
 }

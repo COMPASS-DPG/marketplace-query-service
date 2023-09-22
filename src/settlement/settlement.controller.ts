@@ -1,34 +1,178 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Logger,
+  HttpStatus,
+  Res,
+} from '@nestjs/common';
 import { SettlementService } from './settlement.service';
-import { CreateSettlementDto } from './dto/create-settlement.dto';
+import {
+  CreateSettlementDto,
+  SettlementFilterDto,
+} from './dto/create-settlement.dto';
 import { UpdateSettlementDto } from './dto/update-settlement.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ResponseSettlementDto } from './dto/response-settlement.dto';
 
 @Controller('settlement')
+@ApiTags('settlement')
 export class SettlementController {
-  constructor(private readonly settlementService: SettlementService) {}
+  // Create a logger instance for this controller to log events and errors.
+  private readonly logger = new Logger(SettlementController.name);
 
+  // Constructor for the SettlementController class, injecting the settlement service
+  constructor(private settlementService: SettlementService) {}
+
+  // API to create a new settlement request.
   @Post()
-  create(@Body() createSettlementDto: CreateSettlementDto) {
-    return this.settlementService.create(createSettlementDto);
+  @ApiOperation({ summary: 'Create a request' }) // Describes the api operation for Swagger.
+  @ApiResponse({ status: HttpStatus.CREATED, type: ResponseSettlementDto }) // Describes the response for Swagger.
+  async createSettlement(
+    @Res() res,
+    @Body() createSettlementDto: CreateSettlementDto,
+  ) {
+    try {
+      // Log the initiation of settlement creation
+      this.logger.log(
+        `Creating a new settlement for user id #${createSettlementDto.userId}`,
+      );
+
+      const settlement = await this.settlementService.createSettlement(
+        createSettlementDto,
+      );
+
+      // Log the successful creation of the settlement
+      this.logger.log(
+        `Successfully created a new settlement for user id #${settlement.userId}, request id ${settlement.requestId}`,
+      );
+
+      // Return a success response with the created request data
+      return res.status(HttpStatus.CREATED).json({
+        message: 'Settlement request created successfully',
+        data: settlement,
+      });
+    } catch (error) {
+      // Log the error if request creation fails
+      this.logger.error(
+        `Failed to create new request for user id #${createSettlementDto.userId}`,
+        error,
+      );
+
+      // Return an error response
+      return res.status(HttpStatus.CREATED).json({
+        message: `Failed to create the request for user id #${createSettlementDto.userId}`,
+      });
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.settlementService.findAll();
+  // API to get all the settlements
+  @Get('')
+  @ApiOperation({ summary: 'Get all settlements' }) // Api oepration for swagger.
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: ResponseSettlementDto,
+    isArray: true,
+  }) // Describe response for swagger
+  async getAllSettlements(@Res() res, @Query() filter: SettlementFilterDto) {
+    try {
+      this.logger.log(`Initiated fetching Settlements`);
+
+      const settlements = await this.settlementService.getAllSettlements(
+        filter,
+      );
+
+      this.logger.log(`Successfully fetched settlements`);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'Successfully fetched settlements',
+        data: settlements,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to fetch settlements`, error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Failed to fetch settlements' });
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.settlementService.findOne(+id);
+  // API to get all the settlements by the userId.
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get all the settlement of a user.' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: ResponseSettlementDto,
+    isArray: true,
+  }) // Describes the response for Swagger.
+  async getUserSettlementsById(
+    @Param('userId') userId: number,
+    @Res() res,
+    @Query() filter: SettlementFilterDto,
+  ) {
+    try {
+      this.logger.log(
+        `Initiated fetching user settlements for user id #${userId}`,
+      );
+
+      const settlements = await this.settlementService.getAllSettlementForUser(
+        +userId,
+        filter,
+      );
+
+      this.logger.log(
+        `Successfully fetched user settlements for user id #${userId}`,
+      );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully fetched user settlements for user id #${userId}`,
+        data: settlements,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch user settlements for user id #${userId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to fetch user settlements for user id #${userId}`,
+      });
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSettlementDto: UpdateSettlementDto) {
-    return this.settlementService.update(+id, updateSettlementDto);
-  }
+  // Get settlement by request ID
+  @Get(':requestId')
+  @ApiOperation({ summary: 'Get a settlement by request ID' }) // Describes the api operation for Swagger.
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseSettlementDto }) // Describes the response for Swagger.
+  async getSettlementById(@Res() res, @Param('requestId') requestId: number) {
+    try {
+      this.logger.log(
+        `Initiated fetching settlement for request id #${requestId}`,
+      );
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.settlementService.remove(+id);
+      const request = await this.settlementService.getsettlementById(+requestId);
+
+      this.logger.log(
+        `Successfully fetched settlement for request id #${requestId}`,
+      );
+
+      return res.status(HttpStatus.OK).json({
+        message: `Successfully fetched settlement for request id #${requestId}`,
+        data: request,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch settlement for request id #${requestId}`,
+        error,
+      );
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: `Failed to fetch settlement for request id #${requestId}`,
+      });
+    }
   }
 }
