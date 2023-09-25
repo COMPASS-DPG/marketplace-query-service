@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-import { RequestModule } from './request/request.module';
 import { SettlementModule } from './settlement/settlement.module';
 
 @Module({
@@ -13,7 +12,6 @@ import { SettlementModule } from './settlement/settlement.module';
       isGlobal: true, // Make the configuration available globally
     }),
     PrismaModule,
-    RequestModule,
     SettlementModule,
   ],
   controllers: [AppController],
