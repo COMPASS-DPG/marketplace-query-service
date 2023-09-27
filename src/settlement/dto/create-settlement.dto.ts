@@ -62,22 +62,6 @@ export class CreateSettlementDto {
   updatedAt?: Date;
 }
 
-// SettlementStatusDto is used for updating the status of a request.
-export class SettlementStatusDto {
-  // New status for the request, should be one of the valid SettlementStatusEnum values.
-  @IsNotEmpty()
-  @IsEnum(SettlementStatusEnum)
-  requestStatus: SettlementStatusEnum;
-}
-
-// SettlementStatusDto is used for updating the status of a request.
-export class thirdPartyResponseStatusEnumDto {
-  // New status for the request, should be one of the valid UserResponseStatusEnum values.
-  @IsNotEmpty()
-  @IsEnum(thirdPartyResponseStatusEnum)
-  thirdPartyResponseStatus: thirdPartyResponseStatusEnum;
-}
-
 // SettlementFilterDto is used for filtering and paginating requests.
 export class SettlementFilterDto {
   // Optional settlement status filter, validated that it's valid SettlementStatusEnum value
