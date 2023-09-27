@@ -7,6 +7,7 @@ export class ResponseSettlementDto {
   readonly SettlementId: number;
   readonly requestId: number;
   readonly userId: number;
+  readonly adminId: number;
   readonly type: thirdPartyResponseStatusEnum;
   readonly transactionId: number;
   readonly requestStatus: SettlementStatusEnum;

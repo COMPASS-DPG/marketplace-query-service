@@ -21,6 +21,11 @@ export class CreateSettlementDto {
   @IsNotEmpty()
   @IsInt()
   userId: number;
+  
+  // Admin Id associated with the Admin
+  @IsNotEmpty()
+  @IsInt()
+  adminId: number;
 
   // Status of the request, should be one of the valid SettlementStatusEnum values.
   @IsNotEmpty()
