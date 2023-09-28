@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CreateSettlementDto,
-  SettlementFilterDto
+  SettlementFilterDto,
 } from './dto/create-settlement.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSettlementDto } from './dto/update-settlement.dto';
@@ -9,26 +13,33 @@ import { UpdateSettlementDto } from './dto/update-settlement.dto';
 @Injectable()
 export class SettlementService {
   constructor(private prisma: PrismaService) {}
-
-  // create a new request for the settlement
   async createSettlement(createSettlementDto: CreateSettlementDto) {
-    try {
-      // Attempt to create a new settlement
-      const newSettlement = await this.prisma.settlement.create({
-        data: createSettlementDto,
-      });
+    // Check for duplicate requestId
+    const existingSettlement = await this.checkForDuplicateRequest(
+      createSettlementDto,
+    );
 
-      return newSettlement;
-    } catch (error) {
-      // Check if the error is related to a duplicate entry (unique constraint violation)
-      if (error.code === 'P2002' && error.meta?.target?.includes('requestId')) {
-        // Handle the duplicate entry error here, e.g., by returning a custom error response
-        throw new NotFoundException('Duplicate requestId. Settlement already exists.');
-      }
-
-      // For other errors, rethrow the error or handle it as needed
-      throw error;
+    if (existingSettlement) {
+      throw new NotAcceptableException(
+        'Duplicate requestId. Settlement already exists.',
+      );
     }
+
+    // If no duplicate, create the new settlement
+    const newSettlement = await this.prisma.settlement.create({
+      data: createSettlementDto,
+    });
+    return newSettlement;
+  }
+
+  // to check the dublicate entry of the existing requestId
+  async checkForDuplicateRequest(createSettlementDto: CreateSettlementDto) {
+    const existingSettlement = await this.prisma.settlement.findFirst({
+      where: {
+        requestId: createSettlementDto.requestId,
+      },
+    });
+    return existingSettlement;
   }
 
   // get all settlements with optional filter and pagination
@@ -54,7 +65,19 @@ export class SettlementService {
   }
 
   // Get settlement for a specific user using the userId
-  async getAllSettlementForUser(userId: number, filter: any) {
+  async getAllSettlementForUser(userId: number, filter: SettlementFilterDto) {
+    // Check if the user exists
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    // get the settlement if the userId exist.
     const {
       thirdPartyResponseStatus,
       requestStatus,
@@ -78,6 +101,19 @@ export class SettlementService {
 
   // Get a settlement by its request ID
   async getsettlementById(requestId: number) {
+    // Check the the settlement is available for the given requestId.
+    const findRequestId = await this.prisma.request.findUnique({
+      where: {
+        requestId: requestId,
+      },
+    });
+
+    if (!findRequestId) {
+      // Handle the case where the requestId does not exist in the database
+      throw new NotFoundException(`Given requestId ${requestId} not found.`);
+    }
+
+    // Get settlement by the requestId
     return this.prisma.settlement.findMany({
       where: {
         requestId: requestId,
@@ -90,6 +126,19 @@ export class SettlementService {
     requestId: number,
     updateSettlementStatusDto: UpdateSettlementDto,
   ) {
+    // Check the the requestId is available for settlement
+    const findRequestId = await this.prisma.request.findUnique({
+      where: {
+        requestId: requestId,
+      },
+    });
+
+    if (!findRequestId) {
+      // Handle the case where the requestId does not exist in the database
+      throw new NotFoundException(`Given requestId ${requestId} not found.`);
+    }
+
+    // Update the settlement by the request Id
     return this.prisma.settlement.updateMany({
       where: {
         requestId: requestId,
