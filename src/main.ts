@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CONSTANTS, SWAGGER_CONSTANTS, SWAGGER_TAGS } from './utils/constants';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,19 @@ async function bootstrap() {
 
   // Set a global API prefix (e.g., '/api')
   app.setGlobalPrefix(CONSTANTS.GLOBAL_PREFIX);
+
+  // Configure a global validation pipe with options
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, //  Remove unexpected properties from DTOs
+      transform: true, //  Automatically transform incoming data types
+      forbidNonWhitelisted: true, //  Reject requests with non-whitelisted properties
+      transformOptions: {
+        //  Additional transformation options
+        enableImplicitConversion: true, //    - Enable implicit type conversion
+      },
+    }),
+  );
 
   // Configure Swagger for API documentation
   const swaggerConfig = new DocumentBuilder()
