@@ -1,5 +1,4 @@
 export enum RequestTypeEnum {
-  REFUND,
   CREDIT,
   INVOICE_REQUEST,
   SETTLEMENT,
