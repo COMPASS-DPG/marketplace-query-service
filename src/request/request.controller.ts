@@ -65,12 +65,12 @@ export class RequestController {
   }
 
   @Get('')
-  @ApiOperation({ summary: 'Get all requests' }) // Describes the api operation for Swagger.
+  @ApiOperation({ summary: 'Get all requests' })
   @ApiResponse({
     status: HttpStatus.OK,
     type: ResponseRequestDto,
     isArray: true,
-  }) // Describes the response for Swagger.
+  })
   async getAllRequests(@Res() res, @Query() filter: RequestFilterDto) {
     try {
       this.logger.log(`Initiated fetching requests`);
@@ -91,12 +91,12 @@ export class RequestController {
   }
 
   @Get('user/:userId')
-  @ApiOperation({ summary: 'Get all requests of a user' }) // Describes the api operation for Swagger.
+  @ApiOperation({ summary: 'Get all requests of a user' })
   @ApiResponse({
     status: HttpStatus.OK,
     type: ResponseRequestDto,
     isArray: true,
-  }) // Describes the response for Swagger.
+  })
   async getAllRequestsForUser(
     @Res() res,
     @Param('userId') userId: number,
@@ -133,8 +133,8 @@ export class RequestController {
   }
 
   @Get(':requestId')
-  @ApiOperation({ summary: 'Get a request' }) // Describes the api operation for Swagger.
-  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto }) // Describes the response for Swagger.
+  @ApiOperation({ summary: 'Get a request' })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
   async getRequestById(@Res() res, @Param('requestId') requestId: number) {
     try {
       this.logger.log(
@@ -158,14 +158,16 @@ export class RequestController {
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to fetch request for request id #${requestId}`,
+        message:
+          error.message ||
+          `Failed to fetch request for request id #${requestId}`,
       });
     }
   }
 
   @Patch('update/:requestId')
-  @ApiOperation({ summary: 'Update a request' }) // Describes the api operation for Swagger.
-  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto }) // Describes the response for Swagger.
+  @ApiOperation({ summary: 'Update a request' })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
   async updateRequestByRequestId(
     @Res() res,
     @Param('requestId') requestId: number,
@@ -190,20 +192,23 @@ export class RequestController {
         data: updatedRequest,
       });
     } catch (error) {
+      console.log('error:', error);
       this.logger.error(
         `Failed to update request for request id #${requestId}`,
         error,
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to updated request for request id #${requestId}`,
+        message:
+          error.meta.cause ||
+          `Failed to updated request for request id #${requestId}`,
       });
     }
   }
 
   @Patch('update/status/:requestId')
-  @ApiOperation({ summary: 'Update a request status' }) // Describes the api operation for Swagger.
-  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto }) // Describes the response for Swagger.
+  @ApiOperation({ summary: 'Update a request status' })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseRequestDto })
   async updateRequestStatus(
     @Res() res,
     @Param('requestId') requestId: number,
@@ -240,9 +245,11 @@ export class RequestController {
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to updated request status to ${JSON.stringify(
-          updateRequestStatusDto,
-        )} for request id #${requestId}`,
+        message:
+          error.meta.cause ||
+          `Failed to updated request status to ${JSON.stringify(
+            updateRequestStatusDto,
+          )} for request id #${requestId}`,
       });
     }
   }

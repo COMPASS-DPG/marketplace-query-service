@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Import your Prisma service
 import {
   CreateRequestDto,
@@ -53,11 +53,15 @@ export class RequestService {
 
   // Get a request by its ID
   async getRequestById(requestId: number) {
-    return this.prisma.request.findUnique({
+    const request = await this.prisma.request.findUnique({
       where: {
         requestId: requestId,
       },
     });
+    if (!request) {
+      throw new NotFoundException(`Request not found with id #${requestId}`);
+    }
+    return request;
   }
 
   // Update a request by its ID
