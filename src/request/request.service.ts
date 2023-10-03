@@ -35,7 +35,7 @@ export class RequestService {
   }
 
   // Get all requests for a specific user with optional filters and pagination
-  async getAllRequestsForUser(userId: number, filter: any) {
+  async getAllRequestsForUser(userId: number, filter: RequestFilterDto) {
     const { status, type, limit = 10, offset = 0, orderBy } = filter;
     return this.prisma.request.findMany({
       where: {
