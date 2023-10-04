@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { RequestStatusEnum, RequestTypeEnum } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
+import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 
 export class UpdateRequestDto {
   // Title of the request.
@@ -19,6 +20,7 @@ export class UpdateRequestDto {
   @IsOptional()
   @IsNotEmpty()
   @IsEnum(RequestStatusEnum)
+  @IsSwaggerEnum(RequestStatusEnum)
   status: RequestStatusEnum;
 
   // Description of the request.
@@ -31,6 +33,7 @@ export class UpdateRequestDto {
   @IsNotEmpty()
   @IsOptional()
   @IsEnum(RequestTypeEnum)
+  @IsSwaggerEnum(RequestTypeEnum)
   type: RequestTypeEnum;
 
   // Optional content of the request in JSON format.

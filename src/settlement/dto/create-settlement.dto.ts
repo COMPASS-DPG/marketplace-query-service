@@ -1,4 +1,7 @@
-import { SettlementStatusEnum, thirdPartyResponseStatusEnum } from '@prisma/client';
+import {
+  SettlementStatusEnum,
+  thirdPartyResponseStatusEnum,
+} from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
 import {
   IsDate,
@@ -8,6 +11,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 
 // createSettlementDto is used for creating the new settlement request
 export class CreateSettlementDto {
@@ -29,11 +33,13 @@ export class CreateSettlementDto {
   // Status of the request, should be one of the valid SettlementStatusEnum values.
   @IsNotEmpty()
   @IsEnum(SettlementStatusEnum)
+  @IsSwaggerEnum(SettlementStatusEnum)
   requestStatus: SettlementStatusEnum;
 
   // Status of the request, should be one of the valid UserResponseStatusEnum values.
   @IsNotEmpty()
   @IsEnum(thirdPartyResponseStatusEnum)
+  @IsSwaggerEnum(thirdPartyResponseStatusEnum)
   thirdPartyResponseStatus: thirdPartyResponseStatusEnum;
 
   // Mandatory field  transaction ID for the settlement request.

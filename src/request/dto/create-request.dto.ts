@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 
 // CreateRequestDto is used for creating a new request.
 export class CreateRequestDto {
@@ -24,6 +25,7 @@ export class CreateRequestDto {
   // Status of the request, should be one of the valid RequestStatusEnum values.
   @IsNotEmpty()
   @IsEnum(RequestStatusEnum)
+  @IsSwaggerEnum(RequestStatusEnum)
   status: RequestStatusEnum;
 
   // Description of the request.
@@ -34,6 +36,7 @@ export class CreateRequestDto {
   // Type of the request, should be one of the valid RequestTypeEnum values.
   @IsNotEmpty()
   @IsEnum(RequestTypeEnum)
+  @IsSwaggerEnum(RequestTypeEnum)
   type: RequestTypeEnum;
 
   // Optional content of the request in JSON format.
@@ -85,6 +88,7 @@ export class RequestStatusDto {
   // New status for the request, should be one of the valid RequestStatusEnum values.
   @IsNotEmpty()
   @IsEnum(RequestStatusEnum)
+  @IsSwaggerEnum(RequestStatusEnum)
   status: RequestStatusEnum;
 }
 

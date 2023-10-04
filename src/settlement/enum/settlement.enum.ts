@@ -1,10 +1,9 @@
-
 export enum SettlementStatusEnum {
   APPROVED,
-  REJECTED
+  REJECTED,
 }
 
 export enum thirdPartyResponseStatusEnum {
   PENDING,
-  VERIFIED
+  VERIFIED,
 }
