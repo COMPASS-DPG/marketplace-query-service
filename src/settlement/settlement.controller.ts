@@ -166,7 +166,7 @@ export class SettlementController {
         message: `Successfully fetched settlement for request id #${requestId}`,
         data: settlement,
       });
-    } catch (error) {      
+    } catch (error) {
       this.logger.error(
         `Failed to fetch settlement for request id #${requestId}`,
         error,
@@ -174,7 +174,8 @@ export class SettlementController {
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message:
-          error.message || `Failed to fetch request for request id #${requestId}`,
+          error.message ||
+          `Failed to fetch request for request id #${requestId}`,
       });
     }
   }
@@ -214,7 +215,8 @@ export class SettlementController {
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message:
-          error.message || `Failed to fetch request for request id #${requestId}`,
+          error.message ||
+          `Failed to fetch request for request id #${requestId}`,
       });
     }
   }

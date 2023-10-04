@@ -96,6 +96,7 @@ export class RequestStatusDto {
 export class RequestFilterDto {
   // Optional status filter, validate that it's a valid enum value.
   @IsOptional()
+  @IsSwaggerEnum(RequestStatusEnum, { isOptional: true })
   @IsEnum(RequestStatusEnum, { each: true })
   status?: RequestStatusEnum;
 
@@ -116,6 +117,7 @@ export class RequestFilterDto {
 
   // Optional request type filter, validate that it's a valid enum value.
   @IsOptional()
+  @IsSwaggerEnum(RequestTypeEnum, { isOptional: true })
   @IsEnum(RequestTypeEnum, { each: true })
   type?: RequestTypeEnum;
 }

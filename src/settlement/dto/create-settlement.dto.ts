@@ -76,11 +76,13 @@ export class CreateSettlementDto {
 export class SettlementFilterDto {
   // Optional settlement status filter, validated that it's valid SettlementStatusEnum value
   @IsOptional()
+  @IsSwaggerEnum(SettlementStatusEnum, { isOptional: true })
   @IsEnum(SettlementStatusEnum, { each: true })
   requestStatus?: SettlementStatusEnum;
 
   // Optional third party status filter, validate that it's valid thirdPartyResponseStatusEnum value
   @IsOptional()
+  @IsSwaggerEnum(thirdPartyResponseStatusEnum, { isOptional: true })
   @IsEnum(thirdPartyResponseStatusEnum, { each: true })
   thirdPartyResponseStatus?: thirdPartyResponseStatusEnum;
 
