@@ -4,7 +4,7 @@ export const CONSTANTS = {
 
 export const SWAGGER_CONSTANTS = {
   TITLE: 'API',
-  DESCRIPTION: 'Marketplace Query Service API description',
+  DESCRIPTION: 'Marketplace Request Service API description',
   VERSION: '1.0',
   PATH: 'api/doc',
   SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY: 'api-config-key',
@@ -13,4 +13,5 @@ export const SWAGGER_CONSTANTS = {
 
 export enum SWAGGER_TAGS {
   REQUEST = 'request',
+  SETTLEMENT = 'settlement',
 }
