@@ -12,6 +12,6 @@ export const SWAGGER_CONSTANTS = {
 };
 
 export enum SWAGGER_TAGS {
-  REQUEST = 'request',
+  REQUEST = 'requests',
   SETTLEMENT = 'settlement',
 }
