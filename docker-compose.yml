@@ -1,0 +1,36 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: marketplace-request-service
+    container_name: marketplace
+    environment:
+      - PORT=${PORT:-4000}
+    ports:
+      - '${PORT:-4000}:4000'
+    depends_on:
+      - db
+    networks:
+      - nest-network
+
+  db:
+    image: postgres:13
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - nest-network
+
+volumes:
+  pg-data:
+
+networks:
+  nest-network:
