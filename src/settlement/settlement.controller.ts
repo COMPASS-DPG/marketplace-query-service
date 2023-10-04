@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Query,
   Logger,
   HttpStatus,
@@ -139,7 +138,8 @@ export class SettlementController {
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to fetch user settlements for user id #${userId}`,
+        message:
+          error.message || `Failed to fetch request for request id #${userId}`,
       });
     }
   }
@@ -166,14 +166,15 @@ export class SettlementController {
         message: `Successfully fetched settlement for request id #${requestId}`,
         data: settlement,
       });
-    } catch (error) {
+    } catch (error) {      
       this.logger.error(
         `Failed to fetch settlement for request id #${requestId}`,
         error,
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to fetch settlement for request id #${requestId}`,
+        message:
+          error.message || `Failed to fetch request for request id #${requestId}`,
       });
     }
   }
@@ -212,7 +213,8 @@ export class SettlementController {
       );
 
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: `Failed to update settlement request for request id #${requestId}`,
+        message:
+          error.message || `Failed to fetch request for request id #${requestId}`,
       });
     }
   }

@@ -57,19 +57,19 @@ model Request {
 }
 
 model Settlement {
-  settlementId       Int                    @id @default(autoincrement())
-  requestId          Int
-  userId             Int
-  adminId            Int
-  requestStatus      SettlementStatusEnum
+  settlementId             Int                          @id @default(autoincrement())
+  requestId                Int
+  userId                   Int
+  adminId                  Int
+  requestStatus            SettlementStatusEnum
   thirdPartyResponseStatus thirdPartyResponseStatusEnum
-  transactionId      Int?
-  content            Json?
-  createdAt          DateTime               @default(now())
-  updatedAt          DateTime               @updatedAt
-  user               User                   @relation(fields: [userId], references: [id]) // Specify fields and references here
-  admin              Admin                  @relation(fields: [adminId], references: [id]) // Specify Admin field reference here
-  request            Request                @relation(fields: [requestId], references: [requestId])
+  transactionId            Int
+  content                  Json?
+  createdAt                DateTime                     @default(now())
+  updatedAt                DateTime                     @updatedAt
+  user                     User                         @relation(fields: [userId], references: [id]) // Specify fields and references here
+  admin                    Admin                        @relation(fields: [adminId], references: [id]) // Specify Admin field reference here
+  request                  Request                      @relation(fields: [requestId], references: [requestId])
 }
 
 enum RequestTypeEnum {

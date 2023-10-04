@@ -5,7 +5,6 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -21,7 +20,7 @@ export class CreateSettlementDto {
   @IsNotEmpty()
   @IsInt()
   userId: number;
-  
+
   // Admin Id associated with the Admin
   @IsNotEmpty()
   @IsInt()
@@ -37,10 +36,10 @@ export class CreateSettlementDto {
   @IsEnum(thirdPartyResponseStatusEnum)
   thirdPartyResponseStatus: thirdPartyResponseStatusEnum;
 
-  // Optional content of the request for the transaction ID.
-  @IsOptional()
-  @IsNumber()
-  transactionID: number;
+  // Mandatory field  transaction ID for the settlement request.
+  @IsNotEmpty()
+  @IsInt()
+  transactionId: number;
 
   // Optional content of the request in JSON format.
   @IsOptional()
