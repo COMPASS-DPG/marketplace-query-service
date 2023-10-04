@@ -53,12 +53,12 @@ model Request {
   user            User              @relation(fields: [userId], references: [id]) // Specify fields and references here
   Admin           Admin?            @relation(fields: [adminId], references: [id])
   adminId         Int?
-  Settlement      Settlement[]
+  Settlement      Settlement?
 }
 
 model Settlement {
   settlementId             Int                          @id @default(autoincrement())
-  requestId                Int
+  requestId                Int                          @unique
   userId                   Int
   adminId                  Int
   requestStatus            SettlementStatusEnum
