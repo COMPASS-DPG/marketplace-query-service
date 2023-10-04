@@ -21,7 +21,7 @@ async function bootstrap() {
     .addApiKey(
       {
         type: 'apiKey',
-        name: 'x-marketplace-settlement-service-api-config-key',
+        name: 'x-marketplace-request-service-api-config-key',
         in: 'header',
       },
       SWAGGER_CONSTANTS.SWAGGER_AUTH_SECURITY_SCHEMA_API_KEY, // API key security scheme name
@@ -38,6 +38,7 @@ async function bootstrap() {
     .setTitle(SWAGGER_CONSTANTS.TITLE)
     .setDescription(SWAGGER_CONSTANTS.DESCRIPTION)
     .setVersion(SWAGGER_CONSTANTS.VERSION)
+    .addTag(SWAGGER_TAGS.REQUEST) //  Add a tag for API grouping
     .addTag(SWAGGER_TAGS.SETTLEMENT) //  Add a tag for API grouping
 
     .build();
