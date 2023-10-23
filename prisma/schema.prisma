@@ -12,7 +12,7 @@ datasource db {
 
 // Dummy user model
 model User {
-  id             Int          @id @default(autoincrement())
+  id             String       @id @unique() @default(uuid()) @db.Uuid
   email          String       @unique
   role           String
   username       String
@@ -26,7 +26,7 @@ model User {
 
 // Dummy Admin Model
 model Admin {
-  id             Int          @id @default(autoincrement())
+  id             String       @id @unique() @default(uuid()) @db.Uuid
   email          String       @unique
   role           String
   username       String
@@ -39,7 +39,7 @@ model Admin {
 
 model Request {
   requestId       Int               @id @default(autoincrement())
-  userId          Int
+  userId          String            @db.Uuid
   title           String
   type            RequestTypeEnum
   description     String
@@ -56,8 +56,8 @@ model Request {
 model Settlement {
   settlementId             Int                          @id @default(autoincrement())
   requestId                Int                          @unique
-  userId                   Int
-  adminId                  Int
+  userId                   String                       @db.Uuid
+  adminId                  String                       @db.Uuid
   requestStatus            SettlementStatusEnum
   thirdPartyResponseStatus thirdPartyResponseStatusEnum
   transactionId            Int

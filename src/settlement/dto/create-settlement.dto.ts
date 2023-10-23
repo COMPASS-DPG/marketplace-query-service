@@ -10,6 +10,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 
@@ -22,13 +23,13 @@ export class CreateSettlementDto {
 
   // User ID associated with the request.
   @IsNotEmpty()
-  @IsInt()
-  userId: number;
+  @IsUUID()
+  userId: string;
 
   // Admin Id associated with the Admin
   @IsNotEmpty()
-  @IsInt()
-  adminId: number;
+  @IsUUID()
+  adminId: string;
 
   // Status of the request, should be one of the valid SettlementStatusEnum values.
   @IsNotEmpty()
@@ -64,7 +65,7 @@ export class CreateSettlementDto {
   // Optional creation date of the request.
   @IsDate()
   @IsOptional()
-  createdAt?: Date;
+  createdAt?: Date = new Date();
 
   // Optional update date of the request.
   @IsDate()

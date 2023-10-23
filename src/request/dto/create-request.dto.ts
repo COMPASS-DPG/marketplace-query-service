@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 
@@ -14,8 +15,8 @@ import { IsSwaggerEnum } from 'src/utils/decorator/decorators';
 export class CreateRequestDto {
   // User ID associated with the request.
   @IsNotEmpty()
-  @IsInt()
-  userId: number;
+  @IsUUID()
+  userId: string;
 
   // Title of the request.
   @IsNotEmpty()

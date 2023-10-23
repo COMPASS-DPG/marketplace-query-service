@@ -65,7 +65,7 @@ export class SettlementService {
   }
 
   // Get settlement for a specific user using the userId
-  async getAllSettlementForUser(userId: number, filter: SettlementFilterDto) {
+  async getAllSettlementForUser(userId: string, filter: SettlementFilterDto) {
     // Check if the user exists
     const user = await this.prisma.user.findUnique({
       where: {

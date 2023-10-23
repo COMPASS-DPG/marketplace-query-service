@@ -71,7 +71,7 @@ export class SettlementController {
   }
 
   // API to get all the settlements
-  @Get('')
+  @Get()
   @ApiOperation({ summary: 'Get all settlements' }) // Api oepration for swagger.
   @ApiResponse({
     status: HttpStatus.OK,
@@ -109,7 +109,7 @@ export class SettlementController {
     isArray: true,
   }) // Describes the response for Swagger.
   async getUserSettlementsById(
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Res() res,
     @Query() filter: SettlementFilterDto,
   ) {
@@ -119,7 +119,7 @@ export class SettlementController {
       );
 
       const settlements = await this.settlementService.getAllSettlementForUser(
-        +userId,
+        userId,
         filter,
       );
 

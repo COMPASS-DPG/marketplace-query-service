@@ -64,7 +64,7 @@ export class RequestController {
     }
   }
 
-  @Get('')
+  @Get()
   @ApiOperation({ summary: 'Get all requests' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -99,7 +99,7 @@ export class RequestController {
   })
   async getAllRequestsForUser(
     @Res() res,
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Query() filter: RequestFilterDto,
   ) {
     try {
@@ -108,7 +108,7 @@ export class RequestController {
       );
 
       const requests = await this.requestService.getAllRequestsForUser(
-        +userId,
+        userId,
         filter,
       );
 
