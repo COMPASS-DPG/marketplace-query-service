@@ -12,12 +12,82 @@ datasource db {
 
 // Dummy user model
 model User {
-  id             Int      @id @default(autoincrement())
-  email          String   @unique
-  userCategory   String
+  id             String       @id @unique() @default(uuid()) @db.Uuid
+  email          String       @unique
+  role           String
   username       String
   password       String
   profilePicture String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  requests       Request[]
+  Settlement     Settlement[]
+}
+
+// Dummy Admin Model
+model Admin {
+  id             String       @id @unique() @default(uuid()) @db.Uuid
+  email          String       @unique
+  role           String
+  username       String
+  password       String
+  profilePicture String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  Settlement     Settlement[]
+}
+
+model Request {
+  requestId       Int               @id @default(autoincrement())
+  userId          String            @db.Uuid
+  title           String
+  type            RequestTypeEnum
+  description     String
+  status          RequestStatusEnum
+  requestContent  Json?
+  responseContent Json?
+  remark          String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  user            User              @relation(fields: [userId], references: [id]) // Specify fields and references here
+  Settlement      Settlement?
+}
+
+model Settlement {
+  settlementId             Int                          @id @default(autoincrement())
+  requestId                Int                          @unique
+  userId                   String                       @db.Uuid
+  adminId                  String                       @db.Uuid
+  requestStatus            SettlementStatusEnum
+  thirdPartyResponseStatus thirdPartyResponseStatusEnum
+  transactionId            Int
+  content                  Json?
+  createdAt                DateTime                     @default(now())
+  updatedAt                DateTime                     @updatedAt
+  user                     User                         @relation(fields: [userId], references: [id]) // Specify fields and references here
+  admin                    Admin                        @relation(fields: [adminId], references: [id]) // Specify Admin field reference here
+  request                  Request                      @relation(fields: [requestId], references: [requestId])
+}
+
+enum RequestTypeEnum {
+  CREDIT
+  INVOICE_REQUEST
+  SETTLEMENT
+}
+
+enum RequestStatusEnum {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  REJECTED
+}
+
+enum SettlementStatusEnum {
+  APPROVED
+  REJECTED
+}
+
+enum thirdPartyResponseStatusEnum {
+  PENDING
+  VERIFIED
 }
